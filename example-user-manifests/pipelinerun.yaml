@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: test4-buildpacks-pipeline-run-
+  namespace: image-build
+spec:
+  taskRunSpecs:
+  # This runs the git-clone bit as non-root. It's actually sort of annoying
+  # and this might be removed, since it requires you to remove the PVC each time
+  - pipelineTaskName: fetch-from-git
+    taskPodTemplate:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+  serviceAccountName: buildpacks-service-account
+  pipelineRef:
+    name: buildpacks
+  params:
+    - name: BUILDER_IMAGE
+      value: docker-registry.tools.wmflabs.org/toolforge-buster0-builder
+    - name: APP_IMAGE
+      value: "harbor.toolsbeta.wmflabs.org/test4/python:snap"
+    - name: SOURCE_URL
+      value: https://github.com/crookedstorm/toolforge-noodling-2
+    - name: USER_ID
+      value: "61312"
+    - name: GROUP_ID
+      value: "61312"
+    # If you have a cache image, could speed this up
+    # - name: CACHE_IMAGE
+    #   value: <IMAGE_NAME>-cache
+  workspaces:
+  - name: source-ws
+    persistentvolumeclaim:
+      claimName: test4-pvc
+  - name: cache-ws
+    emptyDir: {}
