@@ -3,8 +3,6 @@ kind: Role
 metadata:
   namespace: image-build
   name: tool-tekton-access
-  labels:
-    app.kubernetes.io/part-of: toolforge
 rules:
 - apiGroups: [""]
   resources:
