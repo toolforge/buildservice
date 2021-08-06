@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: basic-user-pass
+    annotations:
+        tekton.dev/docker-0: <link to registry eg. docker-registry.tools.wmfslabs.org>
+type: kubernetes.io/basic-auth
+stringData:
+    username: <replace with USERNAME>
+    password: <replace with PASSWORD>
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+    name: buildpacks-service-account
+secrets:
+    - name: basic-user-pass

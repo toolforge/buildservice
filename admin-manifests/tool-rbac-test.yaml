@@ -1,0 +1,54 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: image-build
+  name: tool-tekton-access
+  labels:
+    app.kubernetes.io/part-of: toolforge
+rules:
+- apiGroups: [""]
+  resources:
+    - persistentvolumeclaims
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - delete
+- apiGroups:
+    - tekton.dev
+  resources:
+    - pipelineruns
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - patch
+    - delete
+- apiGroups:
+    - tekton.dev
+  resources:
+    - pipelines
+    - pipelineresources
+    - tasks
+    - taskruns
+    - conditions
+  verbs:
+    - get
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tool-tekton-access-rb
+  namespace: image-build
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: toolforge
+roleRef:
+  kind: Role
+  name: tool-tekton-access
+  apiGroup: rbac.authorization.k8s.io

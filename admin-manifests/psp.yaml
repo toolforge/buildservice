@@ -1,0 +1,140 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: runtime/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
+  name: image-build-defaults
+spec:
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+  - ALL
+  allowedHostPaths:
+  - pathPrefix: /etc/wmcs-project
+    readOnly: true
+  - pathPrefix: /etc/ldap.yaml
+    readOnly: true
+  - pathPrefix: /etc/novaobserver.yaml
+    readOnly: true
+  - pathPrefix: /etc/ldap.conf
+    readOnly: true
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - projected
+  - secret
+  - hostPath
+  - persistentVolumeClaim
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: runtime/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
+  name: image-build-controller
+spec:
+  fsGroup:
+    rule: 'RunAsAny'
+  requiredDropCapabilities:
+  - ALL
+  allowPrivilegeEscalation: false
+  allowedHostPaths:
+  - pathPrefix: /etc/wmcs-project
+    readOnly: true
+  - pathPrefix: /etc/ldap.yaml
+    readOnly: true
+  - pathPrefix: /etc/novaobserver.yaml
+    readOnly: true
+  - pathPrefix: /etc/ldap.conf
+    readOnly: true
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'RunAsAny'
+  volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - projected
+  - secret
+  - hostPath
+  - persistentVolumeClaim
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: image-build-defaults-psp
+  namespace: image-build
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - image-build-defaults
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: image-build-controller-psp
+  namespace: image-build
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - image-build-controller
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: image-build-defaults-psp-binding
+  namespace: image-build
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: image-build-defaults-psp
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: image-build
+- kind: ServiceAccount
+  name: buildpacks-service-account
+  namespace: image-build
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: image-build-controller-psp-binding
+  namespace: image-build
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: image-build-controller-psp
+subjects:
+- kind: ServiceAccount
+  name: tekton-pipelines-controller
+  namespace: tekton-pipelines
