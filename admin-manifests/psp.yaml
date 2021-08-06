@@ -52,7 +52,17 @@ spec:
   fsGroup:
     rule: 'RunAsAny'
   requiredDropCapabilities:
-  - ALL
+    # The build step does run chown and a rooted copy, which requires CHOWN,
+    # SETGID, FOWNER, DAC_OVERRIDE and SETUID caps
+    - SETPCAP
+    - MKNOD
+    - AUDIT_WRITE
+    - NET_RAW
+    - FSETID
+    - KILL
+    - NET_BIND_SERVICE
+    - SYS_CHROOT
+    - SETFCAP
   allowPrivilegeEscalation: false
   allowedHostPaths:
   - pathPrefix: /etc/wmcs-project
