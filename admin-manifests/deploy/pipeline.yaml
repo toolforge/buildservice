@@ -55,28 +55,19 @@ spec:
       default: "1000"
 
   tasks:
-    - name: fetch-from-git
+    - name: build-from-git
       taskRef:
-        name: git-clone
-      params:
-        - name: url
-          value: $(params.SOURCE_URL)
-        - name: revision
-          value: $(params.SOURCE_REFERENCE)
-      workspaces:
-        - name: output
-          workspace: source-ws
-    - name: build
-      runAfter:
-        - fetch-from-git
-      taskRef:
-        name: buildpacks-phases
+        name: toolforge-buildpacks-phases
       workspaces:
         - name: source
           workspace: source-ws
         - name: cache
           workspace: cache-ws
       params:
+        - name: url
+          value: $(params.SOURCE_URL)
+        - name: revision
+          value: $(params.SOURCE_REFERENCE)
         - name: BUILDER_IMAGE
           value: "$(params.BUILDER_IMAGE)"
         - name: APP_IMAGE

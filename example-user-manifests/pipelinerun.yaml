@@ -1,17 +1,9 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: test4-buildpacks-pipeline-run-
+  generateName: test4-buildpacks-pipelinerun-
   namespace: image-build
 spec:
-  taskRunSpecs:
-  # This runs the git-clone bit as non-root. It's actually sort of annoying
-  # and this might be removed, since it requires you to remove the PVC each time
-  - pipelineTaskName: fetch-from-git
-    taskPodTemplate:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
   serviceAccountName: buildpacks-service-account
   pipelineRef:
     name: buildpacks

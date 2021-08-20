@@ -4,15 +4,6 @@ metadata:
   namespace: image-build
   name: tool-tekton-access
 rules:
-- apiGroups: [""]
-  resources:
-    - persistentvolumeclaims
-  verbs:
-    - get
-    - list
-    - watch
-    - create
-    - delete
 - apiGroups:
     - tekton.dev
   resources:

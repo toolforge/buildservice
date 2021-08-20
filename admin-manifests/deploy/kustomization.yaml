@@ -2,7 +2,7 @@ commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 resources:
 - namespace.yaml
-- tasks.yaml
+- task-combined.yaml
 - psp.yaml
 - rbac.yaml
 - pipeline.yaml
