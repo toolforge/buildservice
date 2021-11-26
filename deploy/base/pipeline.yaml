@@ -24,16 +24,21 @@ spec:
   params:
     - name: BUILDER_IMAGE
       description: The image on which builds will run (must include lifecycle and compatible buildpacks).
+      type: "string"
     - name: APP_IMAGE
       description: The name of where to store the app image.
+      type: "string"
     - name: SOURCE_URL
       description: A git repo url where the source code resides.
+      type: "string"
     - name: SOURCE_REFERENCE
       description: The branch, tag or SHA to checkout.
       default: ""
+      type: "string"
     - name: SOURCE_SUBPATH
       description: A subpath within checked out source where the source to build is located.
       default: ""
+      type: "string"
     - name: ENV_VARS
       type: array
       description: Environment variables to set during _build-time_.
@@ -41,18 +46,23 @@ spec:
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
       default: "web"
+      type: "string"
     - name: RUN_IMAGE
       description: The name of the run image to use (defaults to image specified in builder).
       default: ""
+      type: "string"
     - name: CACHE_IMAGE
       description: The name of the persistent cache image.
       default: ""
+      type: "string"
     - name: USER_ID
       description: The user ID of the builder image user.
       default: "1000"
+      type: "string"
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "1000"
+      type: "string"
 
   tasks:
     - name: build-from-git
