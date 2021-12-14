@@ -6,6 +6,6 @@ template of the secret that must be added to log into the docker registry.
 
 In order to deploy this, first, apply the manifests in the tekton-manifests
 directory to set up Tekton Pipelines. Once that is up, run, from this directory
-`kubectl sudo apply -k deploy` to apply most of the necessary system and create
+`kubectl apply -k deploy` to apply most of the necessary system and populate
 the `image-build` namespace. At that point, you will need to create a proper
 secret manifest and apply that as well before you try building anything.

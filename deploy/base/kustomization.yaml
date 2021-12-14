@@ -1,0 +1,14 @@
+# Requires the base-tekton to have been applied as it has the CRD definitions 
+# (can't use it as base due to race conditions)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app.kubernetes.io/part-of: toolforge-build-service
+resources:
+- namespace.yaml
+- task-combined.yaml
+- psp.yaml
+- rbac.yaml
+- pipeline.yaml
+- auth.yaml

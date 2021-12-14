@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: test4-buildpacks-pipelinerun-
+  generateName: minikube-user-buildpacks-pipelinerun-
   namespace: image-build
 spec:
   serviceAccountName: buildpacks-service-account
@@ -11,9 +11,9 @@ spec:
     - name: BUILDER_IMAGE
       value: docker-registry.tools.wmflabs.org/toolforge-buster0-builder
     - name: APP_IMAGE
-      value: "harbor.toolsbeta.wmflabs.org/test4/python:snap"
+      value: "192.168.49.1/minikube-user/python:snap"
     - name: SOURCE_URL
-      value: https://github.com/crookedstorm/toolforge-noodling-2
+      value: https://github.com/david-caro/wm-lol
     - name: USER_ID
       value: "61312"
     - name: GROUP_ID
@@ -23,7 +23,9 @@ spec:
     #   value: <IMAGE_NAME>-cache
   workspaces:
   - name: source-ws
-    persistentvolumeclaim:
-      claimName: test4-pvc
+    emptyDir: {}
+    # TODO: use persistent volume claims
+    #persistentvolumeclaim:
+      #claimName: minikube-user-pvc
   - name: cache-ws
     emptyDir: {}
