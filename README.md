@@ -45,7 +45,7 @@ Deploying this system can be done with:
 - `kubectl create examples/pipeline.yaml`
 
 ### Debugging
-At this point I recommend installing the [tekton cli](https://tekton.dev/docs/cli/), that makes it easier to inspect (otheriwse you have a bunch of json to parse).
+At this point I recommend installing the [tekton cli](https://tekton.dev/docs/cli/), that makes it easier to inspect (otherwise you have a bunch of json to parse).
 
 
 Getting the taskruns:
