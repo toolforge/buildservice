@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: basic-user-pass
+    namespace: image-build
+    annotations:
+        tekton.dev/docker-0: harbor.toolsbeta.wmflabs.org
+# Replace the following manually when depolying
+stringData:
+    username: PLACEHOLDER
+    password: PLACEHOLDER
