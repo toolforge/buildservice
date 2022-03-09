@@ -25,8 +25,8 @@ Once harbor is running, you will need to make sure that it's setup (user project
 - `utils/setup_harbor.py`
 
 ### Setup minikube
-We will need to get a specific k8s version (1.20.11 is the current toolforge version when writing this, you might want to double check):
- - `minikube start --kubernetes-version=v1.20.11`
+We will need to get a specific k8s version (1.21.6 is the current toolforge version when writing this, you might want to double check):
+ - `minikube start --kubernetes-version=v1.21.6`
 
 ### Setup admission controller (optional)
 If you want to do a full stack test, you'll need to deploy the buildpack admission controller too, for that follow the instructions [here](https://github.com/toolforge/buildpack-admission-controller).
@@ -40,6 +40,8 @@ If you want to check first what would be deployed, you can run:
 Deploying this system can be done with:
 - `kubectl apply -k deploy/base-tekton` -> creates the CRDs and tekton related objects
 - `kubectl apply -k deploy/devel` -> uses the CRDs defined above
+
+This two step deploy is a limitation of the current deployment system, as you can't use the CRDs in the same run you create them.
 
 ### Run a pipeline
 - `kubectl create examples/pipeline.yaml`
