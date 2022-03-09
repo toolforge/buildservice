@@ -4,6 +4,7 @@ kind: Kustomization
 commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 bases:
+  - ../base-tekton
   - ../base
 patches:
   - auth-patch.yaml
