@@ -7,6 +7,7 @@ commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 resources:
 - namespace.yaml
+- tekton-controller-rbac.yaml
 - task-combined.yaml
 - psp.yaml
 - rbac.yaml

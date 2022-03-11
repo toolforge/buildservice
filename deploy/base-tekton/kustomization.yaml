@@ -5,4 +5,3 @@ commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 resources:
 - tekton-pipelines.yaml
-- tekton-controller-rbac.yaml
