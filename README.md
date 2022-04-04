@@ -44,7 +44,7 @@ Deploying this system can be done with:
 This two step deploy is a limitation of the current deployment system, as you can't use the CRDs in the same run you create them.
 
 ### Run a pipeline
-- `kubectl create examples/pipeline.yaml`
+- `kubectl create -f example-user-manifests/pipelinerun.yaml`
 
 ### Debugging
 At this point I recommend installing the [tekton cli](https://tekton.dev/docs/cli/), that makes it easier to inspect (otherwise you have a bunch of json to parse).

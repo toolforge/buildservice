@@ -142,7 +142,7 @@ spec:
       default: empty-dir
     - name: LIFECYCLE_IMAGE
       description: The image to use when executing sensitive phases.
-      default: docker.io/buildpacksio/lifecycle:0.13.4@sha256:b6d7e9d784cbed9a26eacf79e721f702e6d27552fb6bc32f0e1b44f12d21e874
+      default: docker.io/buildpacksio/lifecycle:0.13.4@sha256:fcb1a66680b9ae1797a167182ad86204275fa9f9dd8ed5be573e636046cdf084
     - name: USER_HOME
       description: Absolute path to the user's home directory.
       default: /tekton/home
