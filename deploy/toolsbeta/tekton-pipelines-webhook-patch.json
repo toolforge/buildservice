@@ -1,0 +1,7 @@
+[
+    {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/image",
+        "value": "docker-registry.tools.wmflabs.org/toolforge-tektoncd-pipeline-cmd-webhook:v0.33.2"
+    }
+]

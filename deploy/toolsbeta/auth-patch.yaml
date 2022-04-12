@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: basic-user-pass
+    namespace: image-build
+    annotations:
+        tekton.dev/docker-0: harbor.toolsbeta.wmflabs.org
+# Replace the following manually when depolying
+# remember that if you don't use quotes, yaml might interpret some symbols, so use quotes!
+stringData:
+    username: "PLACEHOLDER"
+    password: "PLACEHOLDER"
