@@ -28,6 +28,11 @@ Once harbor is running, you will need to make sure that it's setup (user project
 We will need to get a specific k8s version (1.21.6 is the current toolforge version when writing this, you might want to double check):
  - `minikube start --kubernetes-version=v1.21.6`
 
+ If you are running other minikube clusters on your machine, you can start a new one, called minikube2 in this example, like so:
+  - `minikube start -p minikube2 --kubernetes-version=v1.21.6`
+
+  You may also need to change the ip address in buildservice/deploy/devel/auth-patch.yaml before deploying. See instructions inside the file.
+
 ### Setup admission controller (optional)
 If you want to do a full stack test, you'll need to deploy the buildpack admission controller too, for that follow the instructions [here](https://github.com/toolforge/buildpack-admission-controller).
 **NOTE**: might be faster to build the buildpack admission controller image locally instead of pulling it.

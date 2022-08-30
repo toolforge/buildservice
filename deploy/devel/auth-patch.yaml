@@ -5,8 +5,10 @@ metadata:
     namespace: image-build
     annotations:
         # this is the minikube host ip by default, you might have to change it
-        # (run `minikube ip` to see it on your system)
-        tekton.dev/docker-0: http://192.168.49.1
+        # (run `minikube ip` to see it on your system).
+        # If you are running multiple minikube clusters,
+        # use `minikube profile list` instead.
+        tekton.dev/docker-0: http://192.168.58.2
 stringData:
     username: "robot$tekton"
     password: "Dummyr0botpass"
