@@ -25,14 +25,19 @@ Once harbor is running, you will need to make sure that it's setup (user project
 - `utils/setup_harbor.py`
 
 ### Setup minikube
-We will need to get a specific k8s version (1.21.6 is the current toolforge version when writing this, you might want to double check):
- - `minikube start --kubernetes-version=v1.21.6`
+We will need to get a specific k8s version (1.21.8 is the current toolforge version when writing this, you might want to double check):
+ - `minikube start --kubernetes-version=v1.21.8`
 
 ### Setup admission controller (optional)
 If you want to do a full stack test, you'll need to deploy the buildpack admission controller too, for that follow the instructions [here](https://github.com/toolforge/buildpack-admission-controller).
 **NOTE**: might be faster to build the buildpack admission controller image locally instead of pulling it.
 
 ### Deploying
+You should change the 'CHANGEME' values for the ones specific to your environment, you can do a quick:
+```
+git grep CHANGEME
+```
+
 If you want to check first what would be deployed, you can run:
 - `kubectl kustomize deploy/base-tekton | vim -`
 - `kubectl kustomize deploy/devel | vim -`

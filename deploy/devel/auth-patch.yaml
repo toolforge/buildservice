@@ -4,9 +4,9 @@ metadata:
     name: basic-user-pass
     namespace: image-build
     annotations:
-        # this is the minikube host ip by default, you might have to change it
+        # CHANGEME: this is the minikube host ip by default, you might have to change it
         # (run `minikube ip` to see it on your system)
-        tekton.dev/docker-0: http://192.168.49.1
+        tekton.dev/docker-0: http://192.168.49.2
 stringData:
     username: "robot$tekton"
     password: "Dummyr0botpass"
