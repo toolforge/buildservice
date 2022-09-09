@@ -12,7 +12,11 @@ import yaml
 
 
 def set_hostname(config: Dict[str, Any]) -> Dict[str, Any]:
-    config["hostname"] = subprocess.check_output("hostname -I| awk '{print $1}'", shell=True).decode().strip()
+    # CHANGEME
+    # this is the ip to access your host from minikube (run `minikube ssh`,
+    # then `grep host.minikube.internal /etc/hosts | cut -f1`
+    # to find the right value on your system)
+    config["hostname"] = "192.168.65.2"
     return config
 
 

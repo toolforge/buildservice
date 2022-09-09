@@ -4,9 +4,11 @@ metadata:
     name: basic-user-pass
     namespace: image-build
     annotations:
-        # CHANGEME: this is the minikube host ip by default, you might have to change it
-        # (run `minikube ip` to see it on your system)
-        tekton.dev/docker-0: http://192.168.49.2
+        # CHANGEME
+        # this is the ip to access your host from minikube (run `minikube ssh`,
+        # then `grep host.minikube.internal /etc/hosts | cut -f1`
+        # to find the right value on your system)
+        tekton.dev/docker-0: http://192.168.65.2
 stringData:
     username: "robot$tekton"
     password: "Dummyr0botpass"
