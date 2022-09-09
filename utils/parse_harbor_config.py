@@ -3,6 +3,7 @@
 Dummy script to remove the https yaml section from the harbor config template.
 """
 import argparse
+import socket
 import subprocess
 import sys
 from pathlib import Path
@@ -12,7 +13,8 @@ import yaml
 
 
 def set_hostname(config: Dict[str, Any]) -> Dict[str, Any]:
-    config["hostname"] = subprocess.check_output("hostname -I| awk '{print $1}'", shell=True).decode().strip()
+    hostname = socket.gethostname()
+    config["hostname"] = socket.gethostbyname(hostname)
     return config
 
 
