@@ -34,14 +34,19 @@ If you want to do a full stack test, you'll need to deploy the buildpack admissi
 
 ### Deploying
 If you want to check first what would be deployed, you can run:
-- `kubectl kustomize deploy/base-tekton | vim -`
 - `kubectl kustomize deploy/devel | vim -`
 
 Deploying this system can be done with:
-- `kubectl apply -k deploy/base-tekton` -> creates the CRDs and tekton related objects
-- `kubectl apply -k deploy/devel` -> uses the CRDs defined above
+- `./deploy.sh devel`
 
-This two step deploy is a limitation of the current deployment system, as you can't use the CRDs in the same run you create them.
+**NOTE**: in the past we have seen kustomize failing to apply the credentials at the same time that resources that use them, if that happens, try removing base-tekton from devel/kustomization.yaml and deploying base-tekton seperately first, before finally running `./deploy.sh devel`
+
+to deploy to toolsbeta, log into the target toolsbeta control plane node as root (or as a cluster-admin user), with a checkout of the repo there somewhere (in a home directory is probably great), run:
+`root@toolsbeta-k8s-control-1:# ./deploy.sh toolsbeta`
+
+to deploy to tools, log into the target tools control plane node as root (or as a cluster-admin user), with a checkout of the repo there somewhere (in a home directory is probably great), run:
+`root@tools-k8s-control-1:# ./deploy.sh tools`
+
 
 ### Run a pipeline
 - `kubectl create -f example-user-manifests/pipelinerun.yaml`
