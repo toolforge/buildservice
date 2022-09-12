@@ -1,15 +1,22 @@
 ---
+# Task that is a mix of
+# https://github.com/tektoncd/catalog/blob/main/task/git-clone/0.8/git-clone.yaml
+# https://github.com/tektoncd/catalog/blob/main/task/buildpacks-phases/0.2/buildpacks-phases.yaml
+#
+# We use the phases to increase the security by splitting the containers that run each phase instead of running the
+# whole of it in the same container. Mainly for the export container to be able to push to a private registry
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: toolforge-buildpacks-phases
   namespace: image-build
   labels:
-    app.kubernetes.io/version: "0.2"
+    app.kubernetes.io/version: "0.5"
   annotations:
     tekton.dev/categories: Image Build, Security
     tekton.dev/pipelines.minVersion: "0.17.0"
     tekton.dev/tags: image-build
+    tekton.dev/platforms: "linux/amd64"
     tekton.dev/displayName: "Toolforge Buildpacks (phases)"
 spec:
   description: >-
@@ -33,6 +40,12 @@ spec:
       description: Directory where application source is located.
     - name: cache
       description: Directory where cache is stored (when no cache image is provided).
+      optional: true
+    - name: dockerconfig
+      description: >-
+        An optional workspace that allows providing a .docker/config.json file
+        for Buildpacks lifecycle binary to access the container registry.
+        The file should be placed at the root of the Workspace with name config.json.
       optional: true
     - name: ssh-directory
       optional: true
@@ -73,6 +86,10 @@ spec:
       description: Set the `http.sslVerify` global git config. Setting this to `false` is not advised unless you are sure that you trust your git remote.
       type: string
       default: "true"
+    - name: crtFileName
+      description: Add the given git CA certificate authority.
+      type: string
+      default: ""
     - name: subdirectory
       description: Subdirectory inside the `source` Workspace to clone the repo into.
       type: string
@@ -134,6 +151,9 @@ spec:
     - name: USER_ID
       description: The user ID of the builder image user.
       default: "1000"
+    - name: SKIP_RESTORE
+      description: Do not write layer metadata or restore cached layers.
+      default: "false"
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "1000"
@@ -142,7 +162,7 @@ spec:
       default: empty-dir
     - name: LIFECYCLE_IMAGE
       description: The image to use when executing sensitive phases.
-      default: docker.io/buildpacksio/lifecycle:0.13.4@sha256:fcb1a66680b9ae1797a167182ad86204275fa9f9dd8ed5be573e636046cdf084
+      default: docker.io/buildpacksio/lifecycle:0.14.1@sha256:56019ba74831e3444f33ee8c0201f18cc300213bac353b8b6a79c7a1669b7a49
     - name: USER_HOME
       description: Absolute path to the user's home directory.
       default: /tekton/home
@@ -150,6 +170,8 @@ spec:
   results:
     - name: APP_IMAGE_DIGEST
       description: The digest of the built `APP_IMAGE`.
+    - name: APP_IMAGE_URL
+      description: The URL of the built `APP_IMAGE`.
 
   stepTemplate:
     env:
@@ -162,69 +184,81 @@ spec:
     - name: clone
       image: "$(params.gitInitImage)"
       env:
-      - name: HOME
-        value: "$(params.userHome)"
-      - name: PARAM_URL
-        value: $(params.url)
-      - name: PARAM_REVISION
-        value: $(params.revision)
-      - name: PARAM_REFSPEC
-        value: $(params.refspec)
-      - name: PARAM_SUBMODULES
-        value: $(params.submodules)
-      - name: PARAM_DEPTH
-        value: $(params.depth)
-      - name: PARAM_SSL_VERIFY
-        value: $(params.sslVerify)
-      - name: PARAM_SUBDIRECTORY
-        value: $(params.subdirectory)
-      - name: PARAM_DELETE_EXISTING
-        value: $(params.deleteExisting)
-      - name: PARAM_HTTP_PROXY
-        value: $(params.httpProxy)
-      - name: PARAM_HTTPS_PROXY
-        value: $(params.httpsProxy)
-      - name: PARAM_NO_PROXY
-        value: $(params.noProxy)
-      - name: PARAM_VERBOSE
-        value: $(params.verbose)
-      - name: PARAM_SPARSE_CHECKOUT_DIRECTORIES
-        value: $(params.sparseCheckoutDirectories)
-      - name: PARAM_USER_HOME
-        value: $(params.userHome)
-      - name: WORKSPACE_OUTPUT_PATH
-        value: $(workspaces.source.path)
-      - name: WORKSPACE_SSH_DIRECTORY_BOUND
-        value: $(workspaces.ssh-directory.bound)
-      - name: WORKSPACE_SSH_DIRECTORY_PATH
-        value: $(workspaces.ssh-directory.path)
-      - name: WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND
-        value: $(workspaces.basic-auth.bound)
-      - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
-        value: $(workspaces.basic-auth.path)
+        - name: HOME
+          value: "$(params.userHome)"
+        - name: PARAM_URL
+          value: $(params.url)
+        - name: PARAM_REVISION
+          value: $(params.revision)
+        - name: PARAM_REFSPEC
+          value: $(params.refspec)
+        - name: PARAM_SUBMODULES
+          value: $(params.submodules)
+        - name: PARAM_DEPTH
+          value: $(params.depth)
+        - name: PARAM_SSL_VERIFY
+          value: $(params.sslVerify)
+        - name: PARAM_CRT_FILENAME
+          value: $(params.crtFileName)
+        - name: PARAM_SUBDIRECTORY
+          value: $(params.subdirectory)
+        - name: PARAM_DELETE_EXISTING
+          value: $(params.deleteExisting)
+        - name: PARAM_HTTP_PROXY
+          value: $(params.httpProxy)
+        - name: PARAM_HTTPS_PROXY
+          value: $(params.httpsProxy)
+        - name: PARAM_NO_PROXY
+          value: $(params.noProxy)
+        - name: PARAM_VERBOSE
+          value: $(params.verbose)
+        - name: PARAM_SPARSE_CHECKOUT_DIRECTORIES
+          value: $(params.sparseCheckoutDirectories)
+        - name: PARAM_USER_HOME
+          value: $(params.userHome)
+        # this was changed to source.path from output.path
+        - name: WORKSPACE_OUTPUT_PATH
+          value: $(workspaces.source.path)
+        - name: WORKSPACE_SSH_DIRECTORY_BOUND
+          value: $(workspaces.ssh-directory.bound)
+        - name: WORKSPACE_SSH_DIRECTORY_PATH
+          value: $(workspaces.ssh-directory.path)
+        - name: WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND
+          value: $(workspaces.basic-auth.bound)
+        - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
+          value: $(workspaces.basic-auth.path)
+        - name: WORKSPACE_SSL_CA_DIRECTORY_BOUND
+          value: $(workspaces.ssl-ca-directory.bound)
+        - name: WORKSPACE_SSL_CA_DIRECTORY_PATH
+          value: $(workspaces.ssl-ca-directory.path)
+      # Not needed for us
+      # securityContext:
+      #   runAsNonRoot: true
+      #   runAsUser: 65532
       script: |
         #!/usr/bin/env sh
         set -eu
-
         if [ "${PARAM_VERBOSE}" = "true" ] ; then
           set -x
         fi
-
         if [ "${WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND}" = "true" ] ; then
           cp "${WORKSPACE_BASIC_AUTH_DIRECTORY_PATH}/.git-credentials" "${PARAM_USER_HOME}/.git-credentials"
           cp "${WORKSPACE_BASIC_AUTH_DIRECTORY_PATH}/.gitconfig" "${PARAM_USER_HOME}/.gitconfig"
           chmod 400 "${PARAM_USER_HOME}/.git-credentials"
           chmod 400 "${PARAM_USER_HOME}/.gitconfig"
         fi
-
         if [ "${WORKSPACE_SSH_DIRECTORY_BOUND}" = "true" ] ; then
           cp -R "${WORKSPACE_SSH_DIRECTORY_PATH}" "${PARAM_USER_HOME}"/.ssh
           chmod 700 "${PARAM_USER_HOME}"/.ssh
           chmod -R 400 "${PARAM_USER_HOME}"/.ssh/*
         fi
-
+        if [ "${WORKSPACE_SSL_CA_DIRECTORY_BOUND}" = "true" ] ; then
+           export GIT_SSL_CAPATH="${WORKSPACE_SSL_CA_DIRECTORY_PATH}"
+           if [ "${PARAM_CRT_FILENAME}" != "" ] ; then
+              export GIT_SSL_CAINFO="${WORKSPACE_SSL_CA_DIRECTORY_PATH}/${PARAM_CRT_FILENAME}"
+           fi
+        fi
         CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}/${PARAM_SUBDIRECTORY}"
-
         cleandir() {
           # Delete any existing contents of the repo directory if it exists.
           #
@@ -239,15 +273,12 @@ spec:
             rm -rf "${CHECKOUT_DIR}"/..?*
           fi
         }
-
         if [ "${PARAM_DELETE_EXISTING}" = "true" ] ; then
           cleandir
         fi
-
         test -z "${PARAM_HTTP_PROXY}" || export HTTP_PROXY="${PARAM_HTTP_PROXY}"
         test -z "${PARAM_HTTPS_PROXY}" || export HTTPS_PROXY="${PARAM_HTTPS_PROXY}"
         test -z "${PARAM_NO_PROXY}" || export NO_PROXY="${PARAM_NO_PROXY}"
-
         /ko-app/git-init \
           -url="${PARAM_URL}" \
           -revision="${PARAM_REVISION}" \
@@ -263,7 +294,7 @@ spec:
         if [ "${EXIT_CODE}" != 0 ] ; then
           exit "${EXIT_CODE}"
         fi
-        
+
     - name: prepare
       image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
       args:
@@ -281,6 +312,10 @@ spec:
         for path in "/tekton/home" "/layers" "$(workspaces.source.path)"; do
           echo "> Setting permissions on '$path'..."
           chown -R "$(params.USER_ID):$(params.GROUP_ID)" "$path"
+
+          if [[ "$path" == "$(workspaces.source.path)" ]]; then
+              chmod 775 "$(workspaces.source.path)"
+          fi
         done
 
         echo "> Parsing additional configuration..."
@@ -412,13 +447,16 @@ spec:
       volumeMounts:
         - name: layers-dir
           mountPath: /layers
+        - name: $(params.PLATFORM_DIR)
+          mountPath: /platform
 
     - name: results
       image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
       script: |
         #!/usr/bin/env bash
         set -e
-        cat /layers/report.toml | grep "digest" | cut -d'"' -f2 | cut -d'"' -f2 | tr -d '\n' | tee $(results.APP_IMAGE_DIGEST.path)
+        grep "digest" /layers/report.toml | cut -d'"' -f2 | cut -d'"' -f2 | tr -d '\n' | tee "$(results.APP_IMAGE_DIGEST.path)"
+        echo -n "$(params.APP_IMAGE)" | tee "$(results.APP_IMAGE_URL.path)"
       volumeMounts:
         - name: layers-dir
           mountPath: /layers

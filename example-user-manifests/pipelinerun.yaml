@@ -9,11 +9,12 @@ spec:
     name: buildpacks
   params:
     - name: BUILDER_IMAGE
-      value: docker-registry.tools.wmflabs.org/toolforge-buster0-builder
+      value: "docker-registry.tools.wmflabs.org/toolforge-bullseye0-builder:latest"
     - name: APP_IMAGE
-      value: "192.168.49.1/minikube-user/python:snap"
+      # CHANGEME: Change this ip to the ip where harbor is listening, usually `minikube ip`
+      value: "192.168.49.2/minikube-user/python:snap"
     - name: SOURCE_URL
-      value: https://github.com/david-caro/wm-lol
+      value: "https://github.com/david-caro/wm-lol"
     - name: USER_ID
       value: "61312"
     - name: GROUP_ID
@@ -22,10 +23,10 @@ spec:
     # - name: CACHE_IMAGE
     #   value: <IMAGE_NAME>-cache
   workspaces:
-  - name: source-ws
-    emptyDir: {}
-    # TODO: use persistent volume claims
-    #persistentvolumeclaim:
+    - name: source-ws
+      emptyDir: {}
+      # TODO: use persistent volume claims
+      #persistentvolumeclaim:
       #claimName: minikube-user-pvc
-  - name: cache-ws
-    emptyDir: {}
+    - name: cache-ws
+      emptyDir: {}
