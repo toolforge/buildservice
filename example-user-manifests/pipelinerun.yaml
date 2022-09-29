@@ -11,11 +11,7 @@ spec:
     - name: BUILDER_IMAGE
       value: "docker-registry.tools.wmflabs.org/toolforge-bullseye0-builder:latest"
     - name: APP_IMAGE
-      # CHANGEME
-      # this is the ip to access your host from minikube (run `minikube ssh`,
-      # then `grep host.minikube.internal /etc/hosts | cut -f1`
-      # to find the right value on your system)
-      value: "192.168.65.2/minikube-user/python:snap"
+      value: "{{HARBOR_IP}}/minikube-user/python:snap"
     - name: SOURCE_URL
       value: "https://github.com/david-caro/wm-lol"
     - name: USER_ID

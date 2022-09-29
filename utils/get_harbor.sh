@@ -2,15 +2,21 @@
 
 CURDIR=$PWD
 HARBOR_DIR=".harbor"
+HARBOR_VERSION=${HARBOR_VERSION:-v2.2.3}  # we use this for now
+
+if [[ "${1:-""}" == "" ]]; then
+  echo "Syntax: get_harbor.sh DOCKER_IP"
+  exit 1
+fi
 
 [[ -e $HARBOR_DIR ]] || mkdir -p "$HARBOR_DIR"
 cd "$HARBOR_DIR"
-HARBOR_VERSION=${HARBOR_VERSION:-v2.2.3}  # we use this for now
 wget \
     https://github.com/goharbor/harbor/releases/download/${HARBOR_VERSION}/harbor-online-installer-${HARBOR_VERSION}.tgz \
     -O harbor-${HARBOR_VERSION}.tgz
 tar xvzf  harbor-${HARBOR_VERSION}.tgz
 cd harbor
+export HARBOR_HOSTNAME="$1"
 $CURDIR/utils/parse_harbor_config.py .
 ./prepare
 # the above runs a docker container and changes permissions for the data dirs,

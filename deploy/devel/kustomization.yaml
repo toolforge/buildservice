@@ -10,3 +10,9 @@ resources:
   - persistent-volume-claim.yaml
 patches:
   - auth-patch.yaml
+patchesJson6902:
+  - path: harbor-ip-patch.yaml
+    target:
+        version: v1
+        kind: Secret
+        name: basic-user-pass

@@ -3,3 +3,4 @@
 .harbor/
 .harbor*.tgz
 *.sw?
+/deploy/devel/harbor-ip-patch.yaml

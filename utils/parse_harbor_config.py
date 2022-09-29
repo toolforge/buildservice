@@ -5,6 +5,7 @@ Dummy script to remove the https yaml section from the harbor config template.
 import argparse
 import subprocess
 import sys
+import os
 from pathlib import Path
 from typing import Any, Dict
 
@@ -12,11 +13,12 @@ import yaml
 
 
 def set_hostname(config: Dict[str, Any]) -> Dict[str, Any]:
-    # CHANGEME
-    # this is the ip to access your host from minikube (run `minikube ssh`,
-    # then `grep host.minikube.internal /etc/hosts | cut -f1`
-    # to find the right value on your system)
-    config["hostname"] = "192.168.65.2"
+    harbor_hostname = os.getenv("HARBOR_HOSTNAME")
+
+    if not harbor_hostname:
+        raise Exception("HARBOR_HOSTNAME env variable is not set")
+
+    config["hostname"] = harbor_hostname
     return config
 
 
