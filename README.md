@@ -20,19 +20,36 @@ You will need to install:
 We will need to get a specific k8s version (1.21.8 is the current toolforge version when writing this, you might want to double check):
  - `minikube start --kubernetes-version=v1.21.8`
 
-### Find your Docker IP
-You will need to reach the Docker daemon on your host from inside Minikube using
-an IP (this is a limitation of Tekton that doesn't support hostnames unless you
-have a valid SSL certificate).
 
-The IP to use will vary depending on your machine, but you can usually find it
-by running:
+### Find you future local Harbor IP
+You will need to reach your local Harbor instance from inside minikube using an
+IP (this is a limitation of Tekton that doesn't support hostnames for
+self-signed certificates).
+
+The IP to use will vary depending on your machine and OS, as we deploy harbor
+with docker-compose this will be the IP where docker lives.
+
+This is usually:
 - `minikube ssh`
 - `grep host.minikube.internal /etc/hosts`
 
+But sometimes (ex. debian bullseye) you will need to use the external IP of your host:
+- `hostname -I| awk '{print $1}'`
+
+Once harbor is up and running (see the section "Setup Harbor" below), you can
+verify if the IP you chose works by curling to it:
+
+```
+$ curl -s http://HARBOR_IP -o /dev/null && echo "works" || echo "does not work"
+works
+```
+
+If it does not, use the other alternative method or select one of the different
+IPs from your laptop (and/or ask for help!)
+
 ### Setup Harbor
 You can install Harbor with the helper script:
-- `utils/get_harbor.sh DOCKER_IP` (use the Docker IP from the previous step)
+- `HARBOR_IP=x.y.z.a utils/get_harbor.sh` (use the Harbor IP from the previous step)
 
 After that you can use docker-compose to run the whole harbor system:
 - `docker-compose -f /Users/fran/wmf/buildservice/.harbor/harbor/docker-compose.yml up -d`
