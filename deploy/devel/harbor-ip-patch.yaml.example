@@ -1,4 +1,0 @@
-- op: replace
-  path: "/metadata/annotations/tekton.dev~1docker-0"
-  # This is the IP that Tekton should use to reach Harbor
-  value: "http://YOUR_HARBOR_IP"

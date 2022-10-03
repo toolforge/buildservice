@@ -4,7 +4,8 @@ metadata:
     name: basic-user-pass
     namespace: image-build
     annotations:
-        tekton.dev/docker-0: http://192.168.65.2
+        # This is the IP that Tekton will use to reach Harbor
+        tekton.dev/docker-0: http://{{HARBOR_IP}}
 stringData:
     username: "robot$tekton"
     password: "Dummyr0botpass"

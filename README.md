@@ -52,7 +52,7 @@ You can install Harbor with the helper script:
 - `HARBOR_IP=x.y.z.a utils/get_harbor.sh` (use the Harbor IP from the previous step)
 
 After that you can use docker-compose to run the whole harbor system:
-- `docker-compose -f /Users/fran/wmf/buildservice/.harbor/harbor/docker-compose.yml up -d`
+- `docker-compose -f .harbor/harbor/docker-compose.yml up -d`
 
 If the docker-compose command exits with an error, try running it again (there
 is a race condition that sometimes makes it fail on the first run).
@@ -68,15 +68,8 @@ admission controller too, for that follow the instructions
 **NOTE**: might be faster to build the buildpack admission controller image locally instead of pulling it.
 
 ### Deploying
-Create a file `deploy/devel/harbor-ip-patch.yaml`, copying the content from
-`harbor-ip-patch.yaml.example` and replacing HARBOR_IP with your Docker IP (see
-the section "Find your Docker IP" above in this document).
-
-If you want to check first what would be deployed, you can run:
-- `kubectl kustomize deploy/devel | vim -`
-
 Deploying this system can be done with:
-- `./deploy.sh devel`
+- `HARBOR_IP=x.y.z.a ./deploy.sh devel`
 
 **NOTE**: in the past we have seen kustomize failing to apply the credentials at the same time that resources that use them, if that happens, try removing base-tekton from devel/kustomization.yaml and deploying base-tekton seperately first, before finally running `./deploy.sh devel`
 
@@ -91,7 +84,7 @@ to deploy to tools, log into the target tools control plane node as root (or as 
 
 `sed 's/{{HARBOR_IP}}/192.168.65.2/' example-user-manifests/pipelinerun.yaml | kubectl create -f -`
 
-(replace `192.168.65.2` with your Docker IP)
+(replace `192.168.65.2` with your Harbor IP)
 
 ### Debugging
 At this point I recommend installing the [tekton cli](https://tekton.dev/docs/cli/), that makes it easier to inspect (otherwise you have a bunch of json to parse).
