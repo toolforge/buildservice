@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: basic-user-pass
+    namespace: image-build
+    annotations:
+        # This is the IP that Tekton will use to reach Harbor
+        tekton.dev/docker-0: http://{{HARBOR_IP}}
+stringData:
+    username: "robot$tekton"
+    password: "Dummyr0botpass"

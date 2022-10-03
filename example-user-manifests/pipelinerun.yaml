@@ -11,8 +11,7 @@ spec:
     - name: BUILDER_IMAGE
       value: "docker-registry.tools.wmflabs.org/toolforge-bullseye0-builder:latest"
     - name: APP_IMAGE
-      # CHANGEME: Change this ip to the ip where harbor is listening, usually `minikube ip`
-      value: "192.168.49.2/minikube-user/python:snap"
+      value: "{{HARBOR_IP}}/minikube-user/python:snap"
     - name: SOURCE_URL
       value: "https://github.com/david-caro/wm-lol"
     - name: USER_ID

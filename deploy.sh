@@ -12,6 +12,12 @@ EOH
 }
 deploy_generic() {
     local environment="${1?No environment passed}"
+
+    if [[ "$environment" = "devel" ]]; then
+        sed "s/{{HARBOR_IP}}/${HARBOR_IP}/"\
+          deploy/devel/auth-patch.yaml.template > deploy/devel/auth-patch.yaml
+    fi
+
     kubectl apply -k "deploy/$environment"
 }
 main () {

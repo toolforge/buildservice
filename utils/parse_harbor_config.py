@@ -5,6 +5,7 @@ Dummy script to remove the https yaml section from the harbor config template.
 import argparse
 import subprocess
 import sys
+import os
 from pathlib import Path
 from typing import Any, Dict
 
@@ -12,7 +13,12 @@ import yaml
 
 
 def set_hostname(config: Dict[str, Any]) -> Dict[str, Any]:
-    config["hostname"] = subprocess.check_output("hostname -I| awk '{print $1}'", shell=True).decode().strip()
+    harbor_hostname = os.getenv("HARBOR_HOSTNAME")
+
+    if not harbor_hostname:
+        raise Exception("HARBOR_HOSTNAME env variable is not set")
+
+    config["hostname"] = harbor_hostname
     return config
 
 

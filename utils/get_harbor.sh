@@ -2,10 +2,12 @@
 
 CURDIR=$PWD
 HARBOR_DIR=".harbor"
+HARBOR_VERSION=${HARBOR_VERSION:-v2.2.3}  # we use this for now
+
+export HARBOR_HOSTNAME="${HARBOR_IP?"HARBOR_IP variable is not set"}"
 
 [[ -e $HARBOR_DIR ]] || mkdir -p "$HARBOR_DIR"
 cd "$HARBOR_DIR"
-HARBOR_VERSION=${HARBOR_VERSION:-v2.2.3}  # we use this for now
 wget \
     https://github.com/goharbor/harbor/releases/download/${HARBOR_VERSION}/harbor-online-installer-${HARBOR_VERSION}.tgz \
     -O harbor-${HARBOR_VERSION}.tgz
