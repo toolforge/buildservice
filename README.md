@@ -68,6 +68,7 @@ admission controller too, for that follow the instructions
 **NOTE**: might be faster to build the buildpack admission controller image locally instead of pulling it.
 
 ### Deploying
+
 Deploying this system can be done with:
 - `HARBOR_IP=x.y.z.a ./deploy.sh devel`
 
@@ -115,5 +116,14 @@ This will not remove the volumes on harbor side, to do so you'll have to stop ha
 
 And you'll need to delete the data directory (sudo is needed due to files created/modified inside the containers):
 - `sudo rm -rf .harbor/harbor/data`
+
+
+### Notes on setting up Harbor in production
+
+In development, every component of Harbor is deployed via docker-compose. In production, we use an external database. Currently, only PostgreSQL is supported by Harbor. This PostgreSQL db should be set up as a Trove instance with a Cinder volume.
+
+To configure Harbor for use with an external db, you need to uncomment the `external_database` section in `harbor.yml` and fill in the necessary information. For the config changes to take effect, you need to run the `./install.sh` afterwards. Remember to also remove the db service from Harbor's `docker-compose.yml`.
+
+On toolsbeta, Harbor is deployed on toolsbeta-harborweb-2. The configuration is under `srv/ops/harbor`, and the data under `/srv/harbor`.
 
 **NOTE**: For production, TBD
