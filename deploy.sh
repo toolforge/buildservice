@@ -18,6 +18,7 @@ deploy_generic() {
           deploy/devel/auth-patch.yaml.template > deploy/devel/auth-patch.yaml
     fi
 
+    kubectl apply -k "deploy/base-tekton"
     kubectl apply -k "deploy/$environment"
 }
 main () {
