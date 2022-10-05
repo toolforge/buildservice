@@ -122,7 +122,7 @@ And you'll need to delete the data directory (sudo is needed due to files create
 
 In development, every component of Harbor is deployed via docker-compose. In production, we use an external database. Currently, only PostgreSQL is supported by Harbor. This PostgreSQL db should be set up as a Trove instance with a Cinder volume.
 
-To configure Harbor for use with an external db, you need to uncomment the `external_database` section in `harbor.yml` and fill in the necessary information. For the config changes to take effect, you need to run the `./install.sh` afterwards. Remember to also remove the db service from Harbor's `docker-compose.yml`.
+To configure Harbor for use with an external db, you need to uncomment the `external_database` section in `harbor.yml` and fill in the necessary information. For the config changes to take effect, you need to run the `./install.sh` afterwards script. Remember to also remove the db service from Harbor's `docker-compose.yml`.
 
 On toolsbeta, Harbor is deployed on toolsbeta-harborweb-2. The configuration is under `srv/ops/harbor`, and the data under `/srv/harbor`.
 
