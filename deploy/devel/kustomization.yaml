@@ -4,7 +4,6 @@ kind: Kustomization
 commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 bases:
-  - ../base-tekton
   - ../base
 resources:
   - persistent-volume-claim.yaml
