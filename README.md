@@ -6,7 +6,7 @@ code and values to deploy the actual build service itself.
 There are components necessary to the healthy functioning of the service that will likely
 not be included in this repository, such as custom webhooks, etc.
 
-See also https://wikitech.wikimedia.org/wiki/Wikimedia_Cloud_Services_team/EnhancementProposals/Toolforge_Buildpack_Implementation
+See also [the proposal doc here](https://wikitech.wikimedia.org/wiki/Wikimedia_Cloud_Services_team/EnhancementProposals/Toolforge_Buildpack_Implementation)
 
 ## Setup dev environment
 
@@ -45,10 +45,17 @@ But sometimes (ex. debian bullseye) you will need to use the external IP of your
 
 - `hostname -I| awk '{print $1}'`
 
-Once Harbor is up and running, you can verify if the IP you chose works by curling to it:
+You can export it for later use:
 
 ```
-$ curl -s http://HARBOR_IP -o /dev/null && echo "works" || echo "does not work"
+$ export HARBOR_IP=x.y.z.a
+```
+
+where x.y.z.a is the Harbor IP you chose.  Once Harbor is up and running, you
+can verify if the IP you chose works by curling to it:
+
+```
+$ curl -s http://$HARBOR_IP -o /dev/null && echo "works" || echo "does not work"
 works
 ```
 
@@ -58,7 +65,7 @@ from your laptop (and/or ask for help!).
 2. **Install & Configure Harbor**
    You can install Harbor with the helper script:
 
-- `HARBOR_IP=x.y.z.a utils/get_harbor.sh` (where x.y.z.a is the Harbor IP from the previous step)
+- `utils/get_harbor.sh`
 
 Spin up Harbor with docker-compose:
 
@@ -84,7 +91,7 @@ admission controller too, for that follow the instructions
 
 Deploying this system can be done with:
 
-- `HARBOR_IP=x.y.z.a ./deploy.sh devel`
+- `./deploy.sh devel`
 
 to deploy to toolsbeta, log into the target toolsbeta control plane node as root (or as a cluster-admin user),
 with a checkout of the repo there somewhere (in a home directory is probably great), run:
@@ -96,7 +103,7 @@ with a checkout of the repo there somewhere (in a home directory is probably gre
 
 ### Run a pipeline
 
-`sed 's/{{HARBOR_IP}}/x.y.z.a/' example-user-manifests/pipelinerun.yaml | kubectl create -f -`
+`sed "s/{{HARBOR_IP}}/$HARBOR_IP/" example-user-manifests/pipelinerun.yaml | kubectl create -f -`
 
 (replace `x.y.z.a` with your Harbor IP)
 
@@ -152,4 +159,6 @@ necessary information. For the config changes to take effect, you need to run th
 `/srv/ops/harbor/install.sh` script afterwards.
 Remember to also remove the db service from Harbor's `docker-compose.yml`.
 
-On toolsbeta, Harbor is deployed on toolsbeta-harborweb-2. The configuration is under `srv/ops/harbor`, and the data under `/srv/harbor`. Puppet code can be found here: https://gerrit.wikimedia.org/r/plugins/gitiles/operations/puppet/+/refs/heads/production/modules/profile/manifests/toolforge/harbor.pp
+On toolsbeta, Harbor is deployed on toolsbeta-harborweb-2. The configuration is
+under `srv/ops/harbor`, and the data under `/srv/harbor`. Puppet code can be
+found [in this puppet manifest](https://gerrit.wikimedia.org/r/plugins/gitiles/operations/puppet/+/refs/heads/production/modules/profile/manifests/toolforge/harbor.pp)
