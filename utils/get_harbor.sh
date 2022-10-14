@@ -2,7 +2,7 @@
 
 CURDIR=$PWD
 HARBOR_DIR=".harbor"
-HARBOR_VERSION=${HARBOR_VERSION:-v2.2.3}  # we use this for now
+HARBOR_VERSION=${HARBOR_VERSION:-v2.5.4}  # we use this for now
 
 export HARBOR_HOSTNAME="${HARBOR_IP?"HARBOR_IP variable is not set"}"
 
