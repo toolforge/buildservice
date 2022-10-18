@@ -1,0 +1,22 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/params/14/default",
+    "value": "docker-registry.tools.wmflabs.org/toolforge-tektoncd-pipeline-cmd-git-init:v0.33.2"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/params/27/default",
+    "value": "docker-registry.tools.wmflabs.org/toolforge-buildpacksio-lifecycle:0.14.1"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/steps/1/image",
+    "value": "docker-registry.tools.wmflabs.org/toolforge-library-bash:5.1.4"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/steps/8/image",
+    "value": "docker-registry.tools.wmflabs.org/toolforge-library-bash:5.1.4"
+  }
+]
