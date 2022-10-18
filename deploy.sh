@@ -18,8 +18,14 @@ deploy_generic() {
           deploy/devel/auth-patch.yaml.template > deploy/devel/auth-patch.yaml
     fi
 
-    kubectl apply -k "deploy/base-tekton"
-    kubectl apply -k "deploy/$environment"
+    if command -v minikube >/dev/null; then
+         kubectl="minikube kubectl --"
+    else
+        kubectl="kubectl"
+    fi
+
+    $kubectl apply -k "deploy/base-tekton"
+    $kubectl apply -k "deploy/$environment"
 }
 main () {
     while getopts "hv" option; do
