@@ -105,7 +105,7 @@ with a checkout of the repo there somewhere (in a home directory is probably gre
 
 `sed "s/{{HARBOR_IP}}/$HARBOR_IP/" example-user-manifests/pipelinerun.yaml | kubectl create -f -`
 
-(replace `x.y.z.a` with your Harbor IP)
+($HARBOR_IP is the ip exported in one of the previous steps)
 
 ### Debugging
 
