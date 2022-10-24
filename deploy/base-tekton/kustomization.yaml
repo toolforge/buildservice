@@ -4,4 +4,17 @@ kind: Kustomization
 commonLabels:
   app.kubernetes.io/part-of: toolforge-build-service
 resources:
-- tekton-pipelines.yaml
+  - tekton-pipelines.yaml
+
+# needed to be able to patch inside lists without replacing them
+patchesJson6902:
+  - path: tekton-pipelines-controller-patch.json
+    target:
+      version: v1
+      kind: Deployment
+      name: tekton-pipelines-controller
+  - path: tekton-pipelines-webhook-patch.json
+    target:
+      version: v1
+      kind: Deployment
+      name: tekton-pipelines-webhook
