@@ -51,7 +51,7 @@ can verify if the IP you chose works by curling to it:
 ```
 $ curl -s http://$HARBOR_IP -o /dev/null && echo "works" || echo "does not work"
 works
-`
+```
 
 If it does not, use the alternative method, or select one of the different IPs
 from your laptop (and/or ask for help!).``
