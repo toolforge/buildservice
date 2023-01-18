@@ -11,19 +11,16 @@ help() {
 EOH
 }
 deploy_generic() {
-    local environment="${1?No environment passed}"
-
-    if [[ "$environment" = "devel" ]]; then
-        sed "s/{{HARBOR_IP}}/${HARBOR_IP}/"\
-          deploy/devel/auth-patch.yaml.template > deploy/devel/auth-patch.yaml
-    fi
+    
+    sed "s/{{HARBOR_IP}}/${HARBOR_IP}/"\
+      deploy/$environment/auth-patch.yaml.template > deploy/$environment/auth-patch.yaml
 
     if command -v minikube >/dev/null; then
          kubectl="minikube kubectl --"
     else
         kubectl="kubectl"
     fi
-
+    
     $kubectl apply -k "deploy/base-tekton"
     $kubectl apply -k "deploy/$environment"
 }
@@ -43,7 +40,17 @@ main () {
         esac
     done
     shift $((OPTIND-1))
-    local environment="${1?No environment passed}"
+    
+    # default to prod, avoid deploying dev in prod if there's any issue
+    local environment="tools"
+    if [[ "${1:-}" == "" ]]; then
+        if [[ -f /etc/wmcs-project ]]; then
+            environment="$(cat /etc/wmcs-project)"
+        fi
+    else
+        environment="${1:-}"
+    fi
+
     if [[ ! -d "deploy/$environment" || "$environment" =~ ^(base|README)$ ]]; then
         echo "Unknown environment $environment, use one of:"
         ls deploy/ | egrep -v '^(base|README)'
