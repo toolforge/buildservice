@@ -38,20 +38,14 @@ with docker-compose this will be the IP where docker lives.
 
 This is usually:
 
-- `minikube ssh`
-- `grep host.minikube.internal /etc/hosts`
+- `export HARBOR_IP=$(minikube ssh "grep host.minikube.internal /etc/hosts" | awk '{print $1}')`
 
 But sometimes (ex. debian bullseye) you will need to use the external IP of your host:
 
-- `hostname -I| awk '{print $1}'`
+- `export HARBOR_IP=$(hostname -I| awk '{print $1}')`
 
-You can export it for later use:
 
-```
-$ export HARBOR_IP=x.y.z.a
-```
-
-where x.y.z.a is the Harbor IP you chose.  Once Harbor is up and running, you
+Once Harbor is up and running, you
 can verify if the IP you chose works by curling to it:
 
 ```
@@ -60,7 +54,14 @@ works
 ```
 
 If it does not, use the alternative method, or select one of the different IPs
-from your laptop (and/or ask for help!).
+from your laptop (and/or ask for help!).``
+
+**NOTE**: On some setups, notably macOS and minikube with docker
+as the driver (the default setting), the HARBOR_IP in the `curl`
+command above should be localhost. Same goes for accessing the
+Harbor UI via your browser. The internal IP is still needed for
+Tekton to communicate with Harbor, so don't skip that step.
+
 
 2. **Install & Configure Harbor**
    You can install Harbor with the helper script:
