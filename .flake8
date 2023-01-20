@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 120
+statistics = True
+import-order-style = edited
+# allow long test names and long strings
+extend-ignore =
+    # line breaks before binary operators
+    W503
+    # whitespace before :
+    E203
