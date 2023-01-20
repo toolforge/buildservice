@@ -1,4 +1,8 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
 
 CURDIR=$PWD
 HARBOR_DIR=".harbor"
@@ -9,11 +13,11 @@ export HARBOR_HOSTNAME="${HARBOR_IP?"HARBOR_IP variable is not set"}"
 [[ -e $HARBOR_DIR ]] || mkdir -p "$HARBOR_DIR"
 cd "$HARBOR_DIR"
 wget \
-    https://github.com/goharbor/harbor/releases/download/${HARBOR_VERSION}/harbor-online-installer-${HARBOR_VERSION}.tgz \
-    -O harbor-${HARBOR_VERSION}.tgz
-tar xvzf  harbor-${HARBOR_VERSION}.tgz
+    https://github.com/goharbor/harbor/releases/download/"${HARBOR_VERSION}"/harbor-online-installer-"${HARBOR_VERSION}".tgz \
+    -O harbor-"${HARBOR_VERSION}".tgz
+tar xvzf  harbor-"${HARBOR_VERSION}".tgz
 cd harbor
-$CURDIR/utils/parse_harbor_config.py .
+"$CURDIR"/utils/parse_harbor_config.py .
 ./prepare
 # the above runs a docker container and changes permissions for the data dirs,
 # so the containers have the correct ones, but that forces us to use sudo when

@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -o errexit
 set -o nounset
 set -o pipefail
-
 
 help() {
     cat <<EOH
@@ -13,46 +13,43 @@ help() {
 EOH
 }
 
-
 check_environment() {
     # verify that the proper environment is passed
     local environment="${1?No environment passed}"
 
     if [[ ! -d "deploy/$environment" || "$environment" =~ ^(base|README)$ ]]; then
         echo "Unknown environment $environment, use one of:"
-        ls deploy/ | egrep -v '^(base|README)'
+        find deploy -maxdepth 1 -mindepth 1 -type d ! -regex 'deploy/base.*' -exec basename {} \;
         exit 1
     fi
 }
-
 
 deploy_generic() {
     local environment="${1?No environment passed}"
 
     if [[ "$environment" == "devel" ]]; then
-        sed "s/{{HARBOR_IP}}/${HARBOR_IP}/"\
-          deploy/devel/auth-patch.yaml.template > deploy/devel/auth-patch.yaml
+        sed "s/{{HARBOR_IP}}/${HARBOR_IP}/" \
+            deploy/devel/auth-patch.yaml.template >deploy/devel/auth-patch.yaml
     fi
 
     if command -v minikube >/dev/null; then
-         kubectl="minikube kubectl --"
+        kubectl="minikube kubectl --"
     else
         kubectl="kubectl"
     fi
-    
+
     $kubectl apply -k "deploy/base-tekton"
     $kubectl apply -k "deploy/$environment"
 }
 
-
-main () {
+main() {
     while getopts "hv" option; do
         case "${option}" in
         h)
             help
             exit 0
             ;;
-        v) set -x;;
+        v) set -x ;;
         *)
             echo "Wrong option $option"
             help
@@ -60,8 +57,8 @@ main () {
             ;;
         esac
     done
-    shift $((OPTIND-1))
-    
+    shift $((OPTIND - 1))
+
     # default to prod, avoid deploying dev in prod if there's any issue
     local environment="tools"
     if [[ "${1:-}" == "" ]]; then
@@ -75,6 +72,5 @@ main () {
     check_environment "$environment"
     deploy_generic "$environment"
 }
-
 
 main "$@"
