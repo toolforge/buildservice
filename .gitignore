@@ -4,3 +4,4 @@
 .harbor*.tgz
 *.sw?
 /deploy/devel/auth-patch.yaml
+/deploy/devel/dockerconfig.yaml
