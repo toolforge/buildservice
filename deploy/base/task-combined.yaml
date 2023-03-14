@@ -24,28 +24,31 @@ spec:
     buildpacks-phases tasks. This is done to avoid requiring a PVC provisioner
     for the workspace and reduce privileges needed.
 
-    The Buildpacks-Phases task builds source into a container image and pushes it to
-    a registry, using Cloud Native Buildpacks. This task separately calls the aspects of the
-    Cloud Native Buildpacks lifecycle, to provide increased security via container isolation.
+    The Buildpacks-Phases task builds source into a container image and pushes
+    it to a registry, using Cloud Native Buildpacks. This task separately calls
+    the aspects of the Cloud Native Buildpacks lifecycle, to provide increased
+    security via container isolation.
 
-    The git-clone Task will clone a repo from the provided url into the
-    output Workspace. By default the repo will be cloned into the root of
-    your Workspace. You can clone into a subdirectory by setting this Task's
-    subdirectory param. This Task also supports sparse checkouts. To perform
-    a sparse checkout, pass a list of comma separated directory patterns to
-    this Task's sparseCheckoutDirectories param.
+    The git-clone Task will clone a repo from the provided url into the output
+    Workspace. By default the repo will be cloned into the root of your
+    Workspace. You can clone into a subdirectory by setting this Task's
+    subdirectory param. This Task also supports sparse checkouts. To perform a
+    sparse checkout, pass a list of comma separated directory patterns to this
+    Task's sparseCheckoutDirectories param.
 
   workspaces:
     - name: source
       description: Directory where application source is located.
     - name: cache
-      description: Directory where cache is stored (when no cache image is provided).
+      description:
+        Directory where cache is stored (when no cache image is provided).
       optional: true
     - name: dockerconfig
       description: >-
         An optional workspace that allows providing a .docker/config.json file
-        for Buildpacks lifecycle binary to access the container registry.
-        The file should be placed at the root of the Workspace with name config.json.
+        for Buildpacks lifecycle binary to access the container registry. The
+        file should be placed at the root of the Workspace with name
+        config.json.
       optional: true
     - name: ssh-directory
       optional: true
@@ -79,11 +82,14 @@ spec:
       type: string
       default: "true"
     - name: depth
-      description: Perform a shallow clone, fetching only the most recent N commits.
+      description:
+        Perform a shallow clone, fetching only the most recent N commits.
       type: string
       default: "1"
     - name: sslVerify
-      description: Set the `http.sslVerify` global git config. Setting this to `false` is not advised unless you are sure that you trust your git remote.
+      description:
+        Set the `http.sslVerify` global git config. Setting this to `false` is
+        not advised unless you are sure that you trust your git remote.
       type: string
       default: "true"
     - name: crtFileName
@@ -91,15 +97,20 @@ spec:
       type: string
       default: ""
     - name: subdirectory
-      description: Subdirectory inside the `source` Workspace to clone the repo into.
+      description:
+        Subdirectory inside the `source` Workspace to clone the repo into.
       type: string
       default: ""
     - name: sparseCheckoutDirectories
-      description: Define the directory patterns to match or exclude when performing a sparse checkout.
+      description:
+        Define the directory patterns to match or exclude when performing a
+        sparse checkout.
       type: string
       default: ""
     - name: deleteExisting
-      description: Clean out the contents of the destination directory if it already exists before cloning.
+      description:
+        Clean out the contents of the destination directory if it already exists
+        before cloning.
       type: string
       default: "true"
     - name: httpProxy
@@ -115,7 +126,8 @@ spec:
       type: string
       default: ""
     - name: verbose
-      description: Log the commands that are executed during `git-clone`'s operation.
+      description:
+        Log the commands that are executed during `git-clone`'s operation.
       type: string
       default: "true"
     - name: gitInitImage
@@ -131,9 +143,13 @@ spec:
     - name: APP_IMAGE
       description: The name of where to store the app image.
     - name: BUILDER_IMAGE
-      description: The image on which builds will run (must include lifecycle and compatible buildpacks).
+      description:
+        The image on which builds will run (must include lifecycle and
+        compatible buildpacks).
     - name: SOURCE_SUBPATH
-      description: A subpath within the `source` input where the source to build is located.
+      description:
+        A subpath within the `source` input where the source to build is
+        located.
       default: ""
     - name: ENV_VARS
       type: array
@@ -146,7 +162,9 @@ spec:
       description: Reference to a run image to use.
       default: ""
     - name: CACHE_IMAGE
-      description: The name of the persistent app cache image (if no cache workspace is provided).
+      description:
+        The name of the persistent app cache image (if no cache workspace is
+        provided).
       default: ""
     - name: USER_ID
       description: The user ID of the builder image user.
@@ -162,7 +180,7 @@ spec:
       default: empty-dir
     - name: LIFECYCLE_IMAGE
       description: The image to use when executing sensitive phases.
-      default: docker.io/buildpacksio/lifecycle:0.14.1@sha256:56019ba74831e3444f33ee8c0201f18cc300213bac353b8b6a79c7a1669b7a49
+      default: docker.io/buildpacksio/lifecycle:0.16.0@sha256:f75a04887fced3ae0504a37edb2c0d29d366511cd9ede34dbb90c5282b106e79
     - name: USER_HOME
       description: Absolute path to the user's home directory.
       default: /tekton/home
@@ -176,7 +194,7 @@ spec:
   stepTemplate:
     env:
       - name: CNB_PLATFORM_API
-        value: "0.4"
+        value: "0.9"
       - name: HOME
         value: $(params.USER_HOME)
 
@@ -385,8 +403,7 @@ spec:
       command: ["/cnb/lifecycle/analyzer"]
       args:
         - "-layers=/layers"
-        - "-group=/layers/group.toml"
-        - "-cache-dir=$(workspaces.cache.path)"
+        - "-stack=/layers/stack.toml"
         - "-cache-image=$(params.CACHE_IMAGE)"
         - "-uid=$(params.USER_ID)"
         - "-gid=$(params.GROUP_ID)"

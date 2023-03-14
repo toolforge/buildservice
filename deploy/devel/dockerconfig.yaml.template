@@ -1,0 +1,11 @@
+---
+# This is needed to allow pulling/pushing from the local harbor with self-signed certs
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dockerconfig
+  namespace: image-build
+type: kubernetes.io/dockerconfigjson
+data:
+  # base64 of the contents of the docker config file
+  .dockerconfigjson: "{{DOCKERCONFIG}}"

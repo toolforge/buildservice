@@ -30,6 +30,10 @@ deploy_generic() {
     if [[ "$environment" == "devel" ]]; then
         sed "s/{{HARBOR_IP}}/${HARBOR_IP}/" \
             deploy/devel/auth-patch.yaml.template >deploy/devel/auth-patch.yaml
+        dockerconfig="{\"insecure-registries\": [\"http://$HARBOR_IP\"]}"
+        encoded_config="$(echo "$dockerconfig" | base64)"
+        sed "s/{{DOCKERCONFIG}}/${encoded_config}/" \
+            deploy/devel/dockerconfig.yaml.template >deploy/devel/dockerconfig.yaml
     fi
 
     if command -v minikube >/dev/null; then

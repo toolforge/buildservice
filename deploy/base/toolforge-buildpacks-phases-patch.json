@@ -7,7 +7,7 @@
   {
     "op": "replace",
     "path": "/spec/params/27/default",
-    "value": "docker-registry.tools.wmflabs.org/toolforge-buildpacksio-lifecycle:0.14.1"
+    "value": "docker-registry.tools.wmflabs.org/toolforge-buildpacksio-lifecycle:0.16.0"
   },
   {
     "op": "replace",
