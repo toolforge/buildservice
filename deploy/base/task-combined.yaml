@@ -474,8 +474,9 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -e
-        grep "digest" /layers/report.toml | cut -d'"' -f2 | cut -d'"' -f2 | tr -d '\n' | tee "$(results.APP_IMAGE_DIGEST.path)"
-        echo -n "$(params.APP_IMAGE)" | tee "$(results.APP_IMAGE_URL.path)"
+        grep "digest" /layers/report.toml | cut -d'"' -f2 | cut -d'"' -f2 | tr -d '\n' > "$(results.APP_IMAGE_DIGEST.path)"
+        echo "$(params.APP_IMAGE)" > "$(results.APP_IMAGE_URL.path)"
+        echo "Built image $(cat $(results.APP_IMAGE_URL.path))@$(cat $(results.APP_IMAGE_DIGEST.path))"
       volumeMounts:
         - name: layers-dir
           mountPath: /layers
