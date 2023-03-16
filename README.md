@@ -89,27 +89,34 @@ admission controller too, for that follow the instructions
 **NOTE**: might be faster to build the buildpack admission controller image locally instead of pulling it.
 
 ### Deploying
-
+#### Locally
 Deploying this system can be done with:
 
 - `./deploy.sh devel`
 
-to deploy to toolsbeta, log into the target toolsbeta control plane node as root, then:
-* if there's no checkout of the repo, clone it:
+#### On a toolforge installation (tools/toolsbeta)
+Ssh to one of the control hosts as root (usually, one of the nodes with a name like `tools-k8s-control-*` or `toolsbeta-test-k8s-control-`).
+
+##### if there's no checkout of the repo
+You have to clone it first:
 ```
 root@toolsbeta-test-k8s-control-4:# [[ -d buildservice ]] || git clone https://github.com/toolforge/buildservice
 ```
-Then you have to add a new commit setting the harbor robot account user and password, for that, edit the file `deploy/<your_env>/auth-patch.yaml`, where `your_env` would be either `tools` or `toolsbeta`, and set the user and pass for the robot account to push images as.
+
+##### Add auth if it's not there
+If the repo already existed, and the last commit has the authentication, then you can skip this.
+If not, you have to add a new commit setting the harbor robot account user and password, for that, edit the file `deploy/<your_env>/auth-patch.yaml`, where `your_env` would be either `tools` or `toolsbeta`, and set the user and pass for the robot account to push images as.
 
 The credentials can be found in the harbor server (somithng like `toolsbeta-harbor-1.toolsbeta.eqiad1.wikimedia.cloud`), under `/srv/ops/harbor/harbor.yaml`.
 
-* if it exists, probably the robot account user and pass is already set, so you just have to rebase on top of the latest code:
+##### Rebase on top of the latest code:
 ```
 root@toolsbeta-test-k8s-control-4:# cd buildservice
 root@toolsbeta-test-k8s-control-4:# git fetch origin
 root@toolsbeta-test-k8s-control-4:# git rebase origin/main
 ```
 
+##### Deploy
 Once done the above, you can just deploy the new code:
 `root@toolsbeta-test-k8s-control-4:# ./deploy.sh`
 
