@@ -107,7 +107,7 @@ root@toolsbeta-test-k8s-control-4:# [[ -d buildservice ]] || git clone https://g
 If the repo already existed, and the last commit has the authentication, then you can skip this.
 If not, you have to add a new commit setting the harbor robot account user and password, for that, edit the file `deploy/<your_env>/auth-patch.yaml`, where `your_env` would be either `tools` or `toolsbeta`, and set the user and pass for the robot account to push images as.
 
-The credentials can be found in the harbor server (somithng like `toolsbeta-harbor-1.toolsbeta.eqiad1.wikimedia.cloud`), under `/srv/ops/harbor/harbor.yaml`.
+The credentials can be found in the harbor server (something like `toolsbeta-harbor-1.toolsbeta.eqiad1.wikimedia.cloud`), under `/srv/ops/harbor/harbor.yml`.
 
 ##### Rebase on top of the latest code:
 ```
