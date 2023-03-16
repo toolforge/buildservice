@@ -94,23 +94,37 @@ Deploying this system can be done with:
 
 - `./deploy.sh devel`
 
-to deploy to toolsbeta, log into the target toolsbeta control plane node as root (or as a cluster-admin user),
-with a checkout of the repo there somewhere (in a home directory is probably great), run:
-`root@toolsbeta-k8s-control-1:# ./deploy.sh toolsbeta`
+to deploy to toolsbeta, log into the target toolsbeta control plane node as root, then:
+* if there's no checkout of the repo, clone it:
+```
+root@toolsbeta-test-k8s-control-4:# [[ -d buildservice ]] || git clone https://github.com/toolforge/buildservice
+```
+Then you have to add a new commit setting the harbor robot account user and password, for that, edit the file `deploy/<your_env>/auth-patch.yaml`, where `your_env` would be either `tools` or `toolsbeta`, and set the user and pass for the robot account to push images as.
 
-to deploy to tools, log into the target tools control plane node as root (or as a cluster-admin user),
-with a checkout of the repo there somewhere (in a home directory is probably great), run:
-`root@tools-k8s-control-1:# ./deploy.sh tools`
+The credentials can be found in the harbor server (somithng like `toolsbeta-harbor-1.toolsbeta.eqiad1.wikimedia.cloud`), under `/srv/ops/harbor/harbor.yaml`.
+
+* if it exists, probably the robot account user and pass is already set, so you just have to rebase on top of the latest code:
+```
+root@toolsbeta-test-k8s-control-4:# cd buildservice
+root@toolsbeta-test-k8s-control-4:# git fetch origin
+root@toolsbeta-test-k8s-control-4:# git rebase origin/main
+```
+
+Once done the above, you can just deploy the new code:
+`root@toolsbeta-test-k8s-control-4:# ./deploy.sh`
 
 ### Run a pipeline
+For this you want to have installed toolforge-cli (either packages or local venv, up to you):
 
-`sed "s/{{HARBOR_IP}}/$HARBOR_IP/" example-user-manifests/pipelinerun.yaml | kubectl create -f -`
+```
+$ toolforge build start https://github.com/david-caro/wm-lol
+```
 
-($HARBOR_IP is the ip exported in one of the previous steps)
+Where the last parameter there is the url to the git repository for your app.
 
 ### Debugging
 
-At this point, we recommend installing the [tekton cli](https://tekton.dev/docs/cli/).
+You can use toolforge-cli to list builds, and see their status, but for extra deep debuging we recommend installing the [tekton cli](https://tekton.dev/docs/cli/).
 This makes it easier to inspect (otherwise you have a bunch of json to parse).
 
 Getting the taskruns:
