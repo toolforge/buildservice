@@ -39,10 +39,12 @@ spec:
   workspaces:
     - name: source
       description: Directory where application source is located.
+      mountPath: /workspace
     - name: cache
       description:
         Directory where cache is stored (when no cache image is provided).
       optional: true
+      mountPath: /cache
     - name: dockerconfig
       description: >-
         An optional workspace that allows providing a .docker/config.json file
