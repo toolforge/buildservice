@@ -7,7 +7,7 @@ import requests
 
 def ensure_project_exsits(harbor_url: str, admin_auth: Tuple[str, str]):
     projects_url = f"{harbor_url}/projects"
-    project_name = "minikube-user"
+    project_name = "tool-minikube-user"
     response = requests.get(url=projects_url, params={"name": project_name})
     response.raise_for_status()
     if response.json():
