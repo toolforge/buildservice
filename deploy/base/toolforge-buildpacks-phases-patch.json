@@ -16,7 +16,12 @@
   },
   {
     "op": "replace",
-    "path": "/spec/steps/8/image",
+    "path": "/spec/steps/7/image",
+    "value": "docker-registry.tools.wmflabs.org/toolforge-library-bash:5.1.4"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/steps/9/image",
     "value": "docker-registry.tools.wmflabs.org/toolforge-library-bash:5.1.4"
   }
 ]
