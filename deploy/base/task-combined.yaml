@@ -446,6 +446,27 @@ spec:
         - name: empty-dir
           mountPath: /tekton/home
 
+    - name: fix-permissions
+      image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+      args: []
+      script: |
+        #!/usr/bin/env bash
+        set -e
+
+        # this is needed for the user that will run in the container to write on the app source code
+        # usually for hardcoded paths for buildpacks that expect to run as user 1000
+        # like logs, on-the-fly conf files, ...
+        for path in "/layers" "$(workspaces.source.path)"; do
+          echo "> Setting permissions on '$path'..."
+          chmod go+rw -R "$path"
+          find "$path" -executable -exec chmod go+x {} \;
+        done
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: $(params.PLATFORM_DIR)
+          mountPath: /platform
+
     - name: export
       image: $(params.LIFECYCLE_IMAGE)
       imagePullPolicy: Always
