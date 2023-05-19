@@ -159,7 +159,7 @@ spec:
       default: []
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
-      default: "web"
+      default: ""
     - name: RUN_IMAGE
       description: Reference to a run image to use.
       default: ""
