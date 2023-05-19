@@ -45,7 +45,7 @@ spec:
       default: []
     - name: PROCESS_TYPE
       description: The default process type to set on the image.
-      default: "web"
+      default: ""
       type: "string"
     - name: RUN_IMAGE
       description: The name of the run image to use (defaults to image specified in builder).
